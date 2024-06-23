@@ -10,7 +10,7 @@ import { SignalProtocolStore } from './storage-type';
 import { SignalDirectory } from './signal-directory';
 import * as SQLite from 'expo-sqlite';
 install();
-
+console.log("qdsdqsdqs");
 
 const db = await SQLite.openDatabaseAsync('databaseName.db');
 
