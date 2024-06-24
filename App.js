@@ -10,14 +10,15 @@ import { SignalProtocolStore } from './storage-type';
 import { SignalDirectory } from './signal-directory';
 import * as SQLite from 'expo-sqlite';
 install();
+
 console.log("qdsdqsdqs");
 
-const db = await SQLite.openDatabaseAsync('databaseName.db');
+/* const db = await SQLite.openDatabaseAsync('databaseName.db');
 
 await db.withTransactionAsync(async () => {
   const result = await db.getFirstAsync('SELECT COUNT(*) FROM USERS');
   console.log('Count:', result.rows[0]['COUNT(*)']);
-});
+}); */
 
 function toArrayBuffer(buffer) {
   const arrayBuffer = new ArrayBuffer(buffer.length);
@@ -441,7 +442,7 @@ export default function App() {
   if (isLoading) {
     return(
       <View style={styles.container}>
-        <Text>Loading db...</Text>
+        <Text className="text-red-600 font-bold font-sans">Loading db...</Text>
       </View>
     )
   }
