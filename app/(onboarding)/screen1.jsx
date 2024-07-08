@@ -22,7 +22,7 @@ const Screen1 = () => {
         </View>
 
         <View className='justify-center pt-8'>
-          <Text className='text-white font-pmedium text-3xl textce'>
+          <Text className='text-white font-pmedium text-3xl'>
           Your Conversations are <Text className='text-[#3400A1] font-pbolditalic text-3xl'>Private</Text>
           </Text>
           <Text className='text-white font-plight text-[18px] mt-4'>We use end-to-end encryption, so only <Text className='text-[#FFA800]'>you </Text><Text>and </Text><Text className='text-[#FFA800]'>your recepient</Text><Text> can read your messages. Not even we can access them.</Text></Text>

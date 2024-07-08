@@ -35,7 +35,7 @@ const Screen3 = () => {
         <View className='w-full self-center justify-end px-8 mb-10'>
           <TouchableOpacity 
               onPress={() => {
-                router.push('screen3');
+                router.replace('phone');
               }}
               activeOpacity={0.7}
               className={`bg-[#3400A1] rounded-3xl min-h-[62px] justify-center items-center`}
