@@ -9,6 +9,7 @@ import OnboardingButton from "../../components/OnboardingButton";
 import Svg, { Line } from 'react-native-svg';
 import countries from '../../assets/countries.json';
 import { Picker } from "@react-native-picker/picker";
+import OtpInput from '../../components/OtpInput';
 const Verify = () => {
   
   const width = Dimensions.get('window').width;
@@ -41,48 +42,24 @@ const Verify = () => {
           </Text>
           <Text className='text-white font-plight text-[18px] mt-4 text-center'>
           Waiting for you to enter the verification code sent to 
-          +213 543 65 38 23
+          {"\n"}+213 543 65 38 23
           </Text>
         </View>
 
-        <View className='w-full h-12 bg-[#0F0028] rounded-3xl mt-20'>
-        <Picker
-        selectedValue={selectedCountry}
-        style={styles.picker}
-        itemStyle={styles.pickerItem}
-        
-        onValueChange={(itemValue) => setSelectedCountry(itemValue)}
-        >
-        {
-          countries.map((country) => (
-            <Picker.Item key={country.code} label={country.country} value={country} 
-            style={{
-              inputAndroid: styles.inputAndroid,
-            }} />
-          ))
-          
-          
-        }
-        </Picker>
+        <View className='w-full mt-8'>
+          <OtpInput length={6} onComplete={otp => console.log(otp)} />
         </View>
-        {selectedCountry && (
-          <View className='w-full mt-8 flex flex-row justify-center space-x-4'>
-            <View className='bg-[#0F0028] rounded-3xl h-12 justify-center items-center w-1/4'>
-              <Text className='text-white'>{selectedCountry.code}</Text>
-            </View>
-            <View className='bg-[#0F0028] rounded-3xl h-12 justify-center items-center w-3/4'>
-              <TextInput className='text-white' 
-                placeholder="Enter your phone number"
-                placeholderTextColor="gray"
-                keyboardType="phone-pad" 
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-              />
-            </View>
-          </View>
-        )}
-        <View className='bottom-0 absolute self-center mb-20 w-full'>
-          <OnboardingButton title="Send Code" handlePress={() => {}}
+
+        <View className ='mt-8'>
+          <Text className='text-white font-plight text-[18px] text-center'>Enter the 6-digit code</Text>
+          <Text className='text-[#FFA800] font-plight text-[18px] mt-2 text-center'>Not getting a code ?</Text>
+        </View>
+        <Image source={require('../../assets/Verify.png')}/>
+        
+        <Text className='text-white font-plight text-[18px] mt-6 text-center'>Resend Code 0:34</Text>
+
+        <View className='self-center mb-20 w-full mt-10'>
+          <OnboardingButton title="Continue" handlePress={() => {router.replace('profileSetup')}}
             containerStyles='bg-[#3400A1] w-full' textStyles={'text-white font-pregular text-[15px]'} isLoading={false} />
         </View>
       </SafeAreaView>

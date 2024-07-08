@@ -43,7 +43,7 @@ const Screen2 = () => {
                 ➜
             </Text>
           </TouchableOpacity> 
-        </View>
+      </View>
     </View>
     
   );

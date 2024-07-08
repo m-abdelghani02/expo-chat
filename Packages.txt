@@ -2,3 +2,4 @@ npx expo install expo-linear-gradient
 npx expo install expo-font
 npx expo install @react-native-picker/picker
 npx expo install react-native-svg
+import * as ImagePicker from 'expo-image-picker'

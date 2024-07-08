@@ -16,6 +16,9 @@ const AuthLayout = () => {
         <Stack.Screen 
           name='verify'
           options={{headerShown:false}} />
+        <Stack.Screen 
+          name='profileSetup'
+          options={{headerShown:false}} />
       </Stack>
 
       <StatusBar backgroundColor="#161622" style='light'/>
