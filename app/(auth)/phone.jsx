@@ -1,4 +1,4 @@
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
@@ -20,6 +20,35 @@ const Phone = () => {
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [phoneNumber, setPhoneNumber] = useState('');
   console.log('Selected Country =', selectedCountry);
+
+  const sendVerification = async (to, channel, locale) => {
+        router.push('/chat');
+/*     try {
+      const response = await fetch('https://verify-1704-mk2iol.twil.io/start-verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ to, channel, locale }),
+      });
+  
+      const data = await response.json();
+      console.log("Verification Code Res",data); // Log for debugging
+  
+      if (data.success) {
+        console.log('Code Sent Successfully');
+        Alert.alert("Success", "Code Sent Successfully");
+        router.push('verify');
+      } else {
+        console.log('Error sending OTP');
+        Alert.alert("Error", "Unable to send Code");
+      }
+    } catch (error) {
+      console.error("Error sending verification:", error);
+      // Handle network errors
+    } */
+  };
+
   return (
     
     <View className='flex-1'> 
@@ -67,7 +96,7 @@ const Phone = () => {
         {selectedCountry && (
           <View className='w-full mt-8 flex flex-row justify-center space-x-4'>
             <View className='bg-[#0F0028] rounded-3xl h-12 justify-center items-center w-1/4'>
-              <Text className='text-white'>{selectedCountry.code}</Text>
+              <Text className='text-white'>+{selectedCountry.code}</Text>
             </View>
             <View className='bg-[#0F0028] rounded-3xl h-12 justify-center items-center w-3/4'>
               <TextInput className='text-white' 
@@ -83,7 +112,7 @@ const Phone = () => {
         <View className='bottom-0 absolute self-center mb-20 w-full'>
           <OnboardingButton 
             title="Send Code" 
-            handlePress={() => {router.push('verify')}}
+            handlePress={() => sendVerification(`+${selectedCountry.code}${phoneNumber}`, 'sms', 'en')}
             containerStyles='bg-[#3400A1] w-full' 
             textStyles={'text-white font-pregular text-[15px]'} 
             isLoading={false} />

@@ -1,4 +1,4 @@
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
@@ -12,6 +12,32 @@ import { Picker } from "@react-native-picker/picker";
 import OtpInput from '../../components/OtpInput';
 const Verify = () => {
   
+
+  const checkVerification = async (to, code) => {
+    try {
+      const response = await fetch('https://verify-1704-mk2iol.twil.io/check-verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ to, code }), 
+      });
+  
+      const data = await response.json();
+      console.log(data); // Log the response for debugging
+  
+      if (data.success) {
+        Alert.alert('Success', 'Verification successful');
+        router.push('profileSetup');
+      } else {
+        // Handle verification failure (display error message)
+      }
+    } catch (error) {
+      console.error("Error checking verification:", error);
+      // Handle network errors or other exceptions
+    }
+  };
+
   const width = Dimensions.get('window').width;
   const lineWidth = width * 0.42;
   const margin = width * 0.05;
@@ -20,6 +46,7 @@ const Verify = () => {
   const svgHeight = strokeWidth;
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [otpCode, setOtpCode] = useState('');
   console.log('Selected Country =', selectedCountry);
   return (
     
@@ -47,7 +74,7 @@ const Verify = () => {
         </View>
 
         <View className='w-full mt-8'>
-          <OtpInput length={6} onComplete={otp => console.log(otp)} />
+          <OtpInput length={6} onComplete={otp => {console.log(otp); setOtpCode(otp)}} />
         </View>
 
         <View className ='mt-8'>
@@ -59,7 +86,7 @@ const Verify = () => {
         <Text className='text-white font-plight text-[18px] mt-6 text-center'>Resend Code 0:34</Text>
 
         <View className='self-center mb-20 w-full mt-10'>
-          <OnboardingButton title="Continue" handlePress={() => {router.replace('profileSetup')}}
+          <OnboardingButton title="Continue" handlePress={() => checkVerification('+213541253104', otpCode)}
             containerStyles='bg-[#3400A1] w-full' textStyles={'text-white font-pregular text-[15px]'} isLoading={false} />
         </View>
       </SafeAreaView>

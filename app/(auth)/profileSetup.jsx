@@ -108,7 +108,7 @@ const ProfileSetup = () => {
         <View className='w-16 self-end justify-end mb-10 mt-20'>
           <TouchableOpacity 
               onPress={() => {
-                router.push('screen3');
+                router.push('/chat');
               }}
               activeOpacity={0.7}
               className={`bg-[#3400A1] rounded-3xl min-h-[62px] justify-center items-center`}
