@@ -12,6 +12,7 @@ import { Picker } from "@react-native-picker/picker";
 import OtpInput from '../../components/OtpInput';
 import * as ImagePicker from 'expo-image-picker'
 import { Platform } from "expo-modules-core";
+import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView';
 
 const ProfileSetup = () => {
   
@@ -39,7 +40,7 @@ const ProfileSetup = () => {
   }
   return (
     
-    <View className='flex-1'> 
+    <CustomKeyboardAvoidingView className='flex-1'> 
       <StatusBar style="light" /> 
       <LinearGradient 
         colors={['#100025', 'rgba(1, 0, 2, 1)']}
@@ -119,7 +120,7 @@ const ProfileSetup = () => {
           </TouchableOpacity> 
         </View>
       </SafeAreaView>
-    </View>
+    </CustomKeyboardAvoidingView>
     
   );
 };
