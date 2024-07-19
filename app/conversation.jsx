@@ -1,29 +1,75 @@
 import React, { useState } from "react";
-import { Dimensions, View, TextInput, TouchableOpacity } from "react-native";
+import {
+  Dimensions,
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Constants from "expo-constants";
 import { StatusBar } from "expo-status-bar";
 import ChatHeader from "../components/ChatHeader";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import MessageList from "../components/MessageList";
-import { Ionicons } from '@expo/vector-icons';
-import { v4 as uuidv4 } from 'uuid';  // Import uuid
+import { Ionicons } from "@expo/vector-icons";
+import uuid from "react-native-uuid"; // Import uuid
+import { Animated } from 'react-native';
 
 const Conversation = () => {
   const item = useLocalSearchParams();
   const router = useRouter();
-  const [messageText, setMessageText] = useState('');
+  const [messageText, setMessageText] = useState("");
   const [messages, setMessages] = useState([
-    { id: uuidv4(), text: 'Good Afternoon!', type: 'received', time: '12:34', isRead: true },
-    { id: uuidv4(), text: 'Lorem ipsum', type: 'sent', time: '11:57', isRead: false },
-    { id: uuidv4(), text: 'Suspendisse pretium, purus', type: 'sent', time: '12:40', isRead: true },
-    { id: uuidv4(), text: 'Aenean lobortis gravida quo augue, sed tristique', type: 'sent', time: '13:43', isRead: false },
+    {
+      id: uuid.v4(),
+      text: "Good Afternoon!",
+      type: "received",
+      time: "12:34",
+      isRead: true,
+    },
+    {
+      id: uuid.v4(),
+      text: "Lorem ipsum",
+      type: "sent",
+      time: "11:57",
+      isRead: false,
+    },
+    {
+      id: uuid.v4(),
+      text: "Suspendisse pretium, purus",
+      type: "sent",
+      time: "12:40",
+      isRead: true,
+    },
+    {
+      id: uuid.v4(),
+      text: "Aenean lobortis gravida quo augue, sed tristique",
+      type: "sent",
+      time: "13:43",
+      isRead: false,
+    },
   ]);
 
   const sendMessageHandler = () => {
     if (messageText) {
-      setMessages([...messages, { id: uuidv4(), text: messageText, type: 'sent', time: '13:43', isRead: false }]);
-      setMessageText('');
+      setMessages([
+        ...messages,
+        {
+          id: uuid.v4(),
+          text: messageText,
+          type: "sent",
+          time: "13:43",
+          isRead: false,
+        },
+      ]);
+      setMessageText("");
+    }
+  };
+
+    const handleKeyPress = (event) => {
+    if (event.nativeEvent.key === "Enter") {
+      sendMessageHandler();
     }
   };
 
@@ -34,31 +80,40 @@ const Conversation = () => {
         colors={["#100025", "rgba(1, 0, 2, 1)"]}
         style={styles.background}
       />
-      <ChatHeader user={item} router={router}/>
-      <View className='bg-[#141414] w-full h-28'></View>
+      <ChatHeader user={item} router={router} />
+      <View className="bg-[#141414] w-full h-28 "></View>
 
-      <View className='flex-1 justify-between overflow-visible'>
-        <View className='flex-1'>
-          <MessageList messages={messages}/>
+      <View className="flex-1 justify-between overflow-visible">
+        <View className="flex-1">
+          <MessageList messages={messages} />
         </View>
-        <View className='pt-2 mb-5'>
-          <View className='flex-row justify-between items-center mx-3'>
-            <View className='flex-grow gap-x-5 bg-[#141414] rounded-full w-36'>
-              <TextInput
-                placeholder="Type a message..."
-                placeholderTextColor='#ADADAD'
-                cursorColor={'#ADADAD'}
-                className='font-pregular h-14 pl-4'
-                style={{color: 'white'}}
-                onChangeText={(text) => setMessageText(text)}
-                value={messageText}
-              />
+        <View className="pt-2 mb-5 ">
+          <View className="flex-row justify-center items-center mx-3 ">
+            <View className="bg-[#141414] rounded-full w-5/6 flex-row items-center">
+              <View className="flex-1">
+                <TextInput
+                  placeholder="Type a message..."
+                  placeholderTextColor="#ADADAD"
+                  cursorColor={"#ADADAD"}
+                  className="font-pregular h-12 pl-4 w-3/4"
+                  style={{ color: "white" }}
+                  onChangeText={(text) => {
+                    setMessageText(text);
+                  }}
+                  value={messageText}
+                />
+              </View>
+              {messageText === "" && (
+                <TouchableOpacity className="pr-4">
+                  <Ionicons name="camera-outline" size={24} color="white" />
+                </TouchableOpacity>
+              )}
             </View>
             <TouchableOpacity
-              className='ml-3 p-4 rounded-full bg-[#3400A1]'
+              className="ml-3 p-3 rounded-full bg-[#3400A1]"
               onPress={sendMessageHandler}
             >
-              <Ionicons name="send" size={24} color="white" />
+              <Ionicons name="send" size={20} color="white" />
             </TouchableOpacity>
           </View>
         </View>
