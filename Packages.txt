@@ -4,3 +4,7 @@ npx expo install @react-native-picker/picker
 npx expo install react-native-svg
 import * as ImagePicker from 'expo-image-picker'
 9VDBTMAN11QCGDNSDRVTLM86
+npx expo install expo-contacts
+npx expo prebuild
+npx expo install expo-blur
+npm install socket.io-client

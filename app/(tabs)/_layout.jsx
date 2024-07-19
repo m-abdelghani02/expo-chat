@@ -119,7 +119,7 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="contacts"
+        name="contactsTab"
         options={{
           title: 'Contacts',
           headerShown: false,

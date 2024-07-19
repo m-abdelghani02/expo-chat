@@ -12,7 +12,7 @@ const MessageList = ({ messages }) => {
   }, [messages]);
 
   return (
-    <View className="flex-1 p-4 bg-black">
+    <View className="flex-1 p-4">
       <FlatList
         ref={flatListRef}
         data={messages}

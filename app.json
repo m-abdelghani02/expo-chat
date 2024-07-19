@@ -27,7 +27,13 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow $(Enigma) to access your contacts."
+        }
+      ]
     ],
     "extra": {
       "router": {

@@ -14,7 +14,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import MessageList from "../components/MessageList";
 import { Ionicons } from "@expo/vector-icons";
 import uuid from "react-native-uuid"; // Import uuid
-import { Animated } from 'react-native';
+import * as ImagePicker from 'expo-image-picker'
 
 const Conversation = () => {
   const item = useLocalSearchParams();
@@ -33,7 +33,7 @@ const Conversation = () => {
       text: "Lorem ipsum",
       type: "sent",
       time: "11:57",
-      isRead: false,
+      isRead: true,
     },
     {
       id: uuid.v4(),
@@ -73,6 +73,19 @@ const Conversation = () => {
     }
   };
 
+  const openPicker = async (selectType) => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: selectType === 'image' ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.Videos,
+      aspect: [4, 3],
+      quality: 1,
+    })
+    console.log(result);
+    if(!result.canceled){
+      console.log('Success');
+      setSelectedImage(result.assets[0].uri);
+    } 
+  }
+
   return (
     <View className="flex-1">
       <StatusBar style="light" />
@@ -84,10 +97,11 @@ const Conversation = () => {
       <View className="bg-[#141414] w-full h-28 "></View>
 
       <View className="flex-1 justify-between overflow-visible">
+
         <View className="flex-1">
           <MessageList messages={messages} />
         </View>
-        <View className="pt-2 mb-5 ">
+        <View className="mb-5">
           <View className="flex-row justify-center items-center mx-3 ">
             <View className="bg-[#141414] rounded-full w-5/6 flex-row items-center">
               <View className="flex-1">
@@ -104,7 +118,9 @@ const Conversation = () => {
                 />
               </View>
               {messageText === "" && (
-                <TouchableOpacity className="pr-4">
+                <TouchableOpacity 
+                  className="pr-4"
+                  onPress={() => {openPicker('image')}}>
                   <Ionicons name="camera-outline" size={24} color="white" />
                 </TouchableOpacity>
               )}
@@ -142,12 +158,11 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   picker: {
-    color: "white", // Set the Picker text color to white
+    color: "white",
   },
   pickerItem: {
-    color: "white", // Set the Picker item text color to white
-    paddingLeft: 10, // Add some padding to the left of the Picker
-    backgroundColor: "#0F0028", // Set the Picker item background color
+    color: "white", 
+    backgroundColor: "#0F0028", 
   },
 });
 
