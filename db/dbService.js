@@ -248,8 +248,10 @@ export const updateMessage = ({ message_id, content }) => {
     db.withTransactionSync(async () => {
       db.execSync('UPDATE Messages SET content = ? WHERE message_id = ?', [content, message_id]);
     })
+    return true;
   } catch (error) {
     console.log('Error updating message', error);
+    return 
   }
 }
 

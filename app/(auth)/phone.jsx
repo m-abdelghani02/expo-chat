@@ -22,7 +22,7 @@ const Phone = () => {
   console.log('Selected Country =', selectedCountry);
 
   const sendVerification = async (to, channel, locale) => {
-        router.push('/chatTab');
+        router.push('/profileSetup');
 /*     try {
       const response = await fetch('https://verify-1704-mk2iol.twil.io/start-verify', {
         method: 'POST',

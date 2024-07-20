@@ -13,6 +13,7 @@ import OtpInput from '../../components/OtpInput';
 import * as ImagePicker from 'expo-image-picker'
 import { Platform } from "expo-modules-core";
 import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView';
+import { authService } from '../../services/authService';
 
 const ProfileSetup = () => {
   
@@ -25,6 +26,7 @@ const ProfileSetup = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const openPicker = async (selectType) => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -38,6 +40,18 @@ const ProfileSetup = () => {
       setSelectedImage(result.assets[0].uri);
     } 
   }
+
+  const handleSaveProfile = () => {
+    const user = {
+      id: phoneNumber,
+      username: name,
+      profile_pic: null, // Null for now
+
+    };
+    authService.setUser(user); // Set the user in authService
+    console.log('User set', authService.getUser()); 
+    router.push('/chatTab'); // Push to chat screen after setting user
+  };
   return (
     
     <CustomKeyboardAvoidingView className='flex-1'> 
@@ -95,7 +109,7 @@ const ProfileSetup = () => {
               />
         </View>
 
-        <View className='bg-[#0F0028] rounded-3xl h-36 w-full mt-6'>
+        <View className='bg-[#0F0028] rounded-3xl h-20 w-full mt-6'>
               <TextInput className='text-white pl-6' 
                 placeholder="Bio"
                 placeholderTextColor="gray"
@@ -105,12 +119,19 @@ const ProfileSetup = () => {
                 onChangeText={setBio}
               />
         </View>
+        <View className='bg-[#0F0028] rounded-3xl h-12 justify-center w-full mt-6'>
+          <TextInput className='text-white pl-6' 
+            placeholder="Phone Number"
+            placeholderTextColor="gray" 
+            keyboardType="phone-pad"
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+          />
+        </View>
  
         <View className='w-16 self-end justify-end mb-10 mt-20'>
           <TouchableOpacity 
-              onPress={() => {
-                router.push('/chat');
-              }}
+              onPress={handleSaveProfile}
               activeOpacity={0.7}
               className={`bg-[#3400A1] rounded-3xl min-h-[62px] justify-center items-center`}
               >
