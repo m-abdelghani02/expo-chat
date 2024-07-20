@@ -1,73 +1,150 @@
 import {
-    Alert,
-    Dimensions,
-    Image,
-    KeyboardAvoidingView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-  } from "react-native";
-  import React, { useState } from "react";
-  import { SafeAreaView } from "react-native-safe-area-context";
-  import { Link, router } from "expo-router";
-  import { LinearGradient } from "expo-linear-gradient";
-  import Constants from "expo-constants";
-  import { StatusBar } from "expo-status-bar";
-  import OnboardingButton from "../../components/OnboardingButton";
-  import Svg, { Line } from "react-native-svg";
-  import countries from "../../assets/countries.json";
-  import { Picker } from "@react-native-picker/picker";
-  import BottomBar from "../../components/BottomBar";
-  import ChatItem from "../../components/ChatItem";
-  import ChatList from "../../components/ChatList";
-  
-  const NewMessage = () => {
-  
-    return (
-      <View className="flex-1">
-        <StatusBar style="light" />
-        <LinearGradient
-          colors={["#100025", "rgba(1, 0, 2, 1)"]}
-          style={styles.background}
-        />
-        <View className="bg-[#141414] h-32 justify-center pl-6 pt-10 mb-5">
-          <Text className="text-white font-pmedium text-4xl ">New Message</Text>
-        </View>
-      </View>
-    );
+  Alert,
+  Dimensions,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Text,
+  ScrollView,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import Constants from "expo-constants";
+import { StatusBar } from "expo-status-bar";
+import { io } from "socket.io-client";
+import { KeyHelper, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript";
+import {SignalProtocolStore} from '../../db/signalStoreSql';
+
+const NewMessage = () => {
+  const [message, setMessage] = useState('');
+  const [name, setName] = useState('');
+  const [socket, setSocket] = useState(null);
+  const [clientList, setClientList] = useState([]);
+
+  const getAllUsers = () => {
+    socket.emit('get users');
   };
-  const height = Dimensions.get("window").height;
-  const styles = StyleSheet.create({
-    background: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-      top: 0,
-      height: height + 100+ Constants.statusBarHeight + 1,
-    },
-    content: {
-      // Center content
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    text: {
-      fontSize: 24,
-      fontWeight: "bold",
-      color: "#fff",
-    },
-    picker: {
-      color: "white", // Set the Picker text color to white
-    },
-    pickerItem: {
-      color: "white", // Set the Picker item text color to white
-      paddingLeft: 10, // Add some padding to the left of the Picker
-      backgroundColor: "#0F0028", // Set the Picker item background color
-    },
-  });
+
+  useEffect(() => {
+    const socketInstance = io('http://192.168.1.20:3000');
+    setSocket(socketInstance);
+
+    socketInstance.on('chat message', (message) => {
+      Alert.alert('Server response:', message);
+    });
+
+    socketInstance.on('allClientIDs', (clientIDs) => {
+      console.log('All connected client IDs:', clientIDs);
+      setClientList(clientIDs);
+    });
+
+    socketInstance.on('private message', (message) => {
+      Alert.alert('Private message:', message);
+    });
+
+    return () => {
+      socketInstance.disconnect();
+    };
+  }, []);
+
+  const setUserNameHandler = () => {
+    if (name.trim()) {
+      socket.emit('setUserName', name); // Send to server
+      setName(''); // Clear input field
+    } else {
+      Alert.alert('Please enter a name.');
+    }
+  };
+
+  const sendMessageToClient = (clientID) => {
+    if (message) {
+      socket.emit('sendToSpecificClient', { message, targetClientId: clientID });
+      setMessage('');
+    } else {
+      Alert.alert('Please enter a message.');
+    }
+  };
+
+  useEffect(() => {
+    const store = new SignalProtocolStore();
+    const setup = async () => {
+      //await store.createSampleTable();
+      //await store.insertIntoSampleData('Test Insert', 324)
+      //await store.getSampleData();
+      await store.listAllTables();
+      await store.getIdentityKeyPair();
+      await store.removeAllSessions(1);
+    };
+    setup();
+
+  }, [])
   
-  export default NewMessage;
   
+  
+
+  return (
+    <View className="flex-1">
+      <StatusBar style="light" />
+      <LinearGradient
+        colors={["#100025", "rgba(1, 0, 2, 1)"]}
+        style={{ position: "absolute", left: 0, right: 0, top: 0, height: Dimensions.get("window").height + 100 + Constants.statusBarHeight + 1 }}
+      />
+      <View className="bg-[#141414] h-32 justify-center pl-6 pt-10 mb-5">
+        <Text className="text-white text-4xl">New Message</Text>
+      </View>
+      <View className='w-3/4 self-center mb-4'>
+        <TextInput
+          className='bg-[#ADADAD] h-10 px-3'
+          placeholder="Enter your name"
+          autoCorrect={false}
+          onChangeText={text => setName(text)}
+          value={name}
+        />
+        <TouchableOpacity
+          className='bg-blue-500 p-2 rounded mt-2'
+          onPress={setUserNameHandler}
+        >
+          <Text className='text-white text-center'>Set Name</Text>
+        </TouchableOpacity>
+      </View>
+      <View className='w-3/4 self-center mb-4'>
+        <TextInput
+          className='bg-[#ADADAD] h-10 px-3'
+          placeholder="Message"
+          autoCorrect={false}
+          onChangeText={chatMessage => setMessage(chatMessage)}
+          value={message}
+        />
+      </View>
+      <ScrollView className='w-3/4 self-center mt-5'>
+        {clientList.map(([id, clientName]) => (
+          <TouchableOpacity
+            key={id}
+            className='bg-blue-500 p-2 mb-2 rounded'
+            onPress={() => sendMessageToClient(id)}
+          >
+            <Text className='text-white'>{clientName}</Text> 
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+      <View className='w-3/4 self-center mt-10'>
+        <TouchableOpacity
+          className='bg-red-500 h-10 justify-center rounded mb-2'
+          onPress={getAllUsers}
+        >
+          <Text className='text-white text-center'>Get all user IDs</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className='bg-red-500 h-10 justify-center rounded'
+          onPress={() => {
+            socket.emit('disconnectAllClients');
+          }}
+        >
+          <Text className='text-white text-center'>Disconnect all users</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+export default NewMessage;
