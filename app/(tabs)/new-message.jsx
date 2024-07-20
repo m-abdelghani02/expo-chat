@@ -14,6 +14,7 @@ import { StatusBar } from "expo-status-bar";
 import { io } from "socket.io-client";
 import { KeyHelper, SessionBuilder, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript";
 import {SignalProtocolStore} from '../../db/signalStoreSql';
+//import {SignalProtocolStore} from '../../storage-type';
 import Buffer from 'buffer';
 
 const NewMessage = () => {
@@ -66,7 +67,7 @@ const NewMessage = () => {
     }
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     const store = new SignalProtocolStore();
     const address = new SignalProtocolAddress('test', 1)
     const setup = async () => {
@@ -91,8 +92,8 @@ const NewMessage = () => {
         else{
           throw new Error("Session not created");
         }
-        const identityKey = await session.storage.getIdentityKeyPair();
-        console.log("Identity key pair from session: ",identityKey);
+        //const identityKey = await session.storage.getIdentityKeyPair();
+        //console.log("Identity key pair from session: ",identityKey);
         await store.getSampleData();
       } catch (error) {
         console.log(error); 
@@ -101,7 +102,36 @@ const NewMessage = () => {
     };
     setup();
 
-  }, [])
+  }, []) */
+
+/*   useEffect(() => {
+    const testSignalProtocol = async () => {
+      try {
+        // Initialize SignalProtocolStore
+        const store = new SignalProtocolStore();
+        const address = new SignalProtocolAddress('blabla', 1);
+        
+        const session = new SessionBuilder(store, address);
+        if (session) {
+          console.log('Session created successfully.');
+        } else {
+          console.error('Failed to create session.');
+        }
+    
+        // Optionally, get and log session data
+         const identityKey = await session.storage.getIdentityKeyPair();
+         console.log('Identity key pair from session:', identityKey);
+    
+        // Perform additional tests or validations here as needed
+    
+      } catch (error) {
+        console.error('Error during Signal Protocol test:', error);
+      }
+    };
+    
+    testSignalProtocol();
+  }, []) */
+  
   
   
   

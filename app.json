@@ -33,7 +33,8 @@
         {
           "contactsPermission": "Allow $(Enigma) to access your contacts."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "extra": {
       "router": {

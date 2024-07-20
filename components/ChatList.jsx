@@ -5,10 +5,6 @@ import { useRouter } from 'expo-router';
 
 const ChatList = ({ conversations}) => {
     const router = useRouter();
-    const handlePress = () => {
-      console.log("Opened Chat !");
-      router.push('/(app)/conversation')
-    }
 
     const parseTimestamp = (timestamp) => {
       const [time, period] = timestamp.split(' ');

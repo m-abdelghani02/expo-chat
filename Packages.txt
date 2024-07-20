@@ -9,3 +9,5 @@ npx expo prebuild
 npx expo install expo-blur
 npm install socket.io-client
 npm i react-native-buffer
+npx expo install expo-secure-store
+npm install axios
