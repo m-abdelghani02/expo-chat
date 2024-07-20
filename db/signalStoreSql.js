@@ -58,11 +58,11 @@ export class SignalProtocolStore {
 
   async getSampleData(){
     try {
-        const allRows = await this.db.getAllAsync('SELECT * FROM test');
+        const allRows = await this.db.getAllAsync('SELECT * FROM identity_keys');
         if (allRows){
         console.log("All rows:");
         for (const row of allRows) {
-            console.log(row.id, row.value, row.intValue);
+            console.log(row.identifier, row.identity_key);
           }
       }
       else {
@@ -95,12 +95,14 @@ export class SignalProtocolStore {
       const kp = this.db.getFirstSync('SELECT pub_key, priv_key FROM key_pairs WHERE key_type = ?', 'identity');
       if (kp) {
         console.log(kp);
+        return kp
       }
       else {
         throw new Error("Identity key pair not found");
       }
     } catch (error) {
       console.log(error);
+      return null;
     }
     
   }
@@ -110,12 +112,14 @@ export class SignalProtocolStore {
       const rid = this.db.getFirstSync('SELECT key_id FROM key_pairs WHERE key_type = ?', 'registrationId');
       if (rid) {
         console.log(rid);
+        return rid;
       }
       else {
         throw new Error("Registration ID not found");
       }
     } catch (error) {
       console.log(error);
+      return null;
     }
   }
 
@@ -128,12 +132,14 @@ export class SignalProtocolStore {
         ('SELECT pub_key, priv_key FROM key_pairs WHERE key_type = ? AND key_id = ?', ['preKey', keyId]);
       if (kp) {
         console.log(kp);
+        return kp;
       }
       else {
         throw new Error("Pre Key pair not found");
       }
     } catch (error) {
       console.log(error);
+      return null;
     }
   }
 
@@ -143,24 +149,37 @@ export class SignalProtocolStore {
         ('SELECT pub_key, priv_key FROM key_pairs WHERE key_type = ? AND key_id = ?', ['signedPreKey', keyId]);
       if (spk) {
         console.log(spk);
+        return spk;
       }
       else {
         throw new Error("Session not found");
       }
     } catch (error) {
       console.log(error);
+      return null;
     }
   }
-  async loadIdentityKey(identifier) {
+  async loadIdentity(identifier) {
     try {
       const idKey = this.db.getFirstSync
         ('SELECT identity_key FROM identity_keys WHERE identifier = ? ', identifier);
       if (idKey) {
-        console.log(idKey);
+        console.log('key=',idKey);
+        return idKey.identity_key;
       }
       else {
         throw new Error("Identity key not found");
       }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async saveIdentity(identifier, identityKey) {
+    try {
+      this.db.runSync(
+        'INSERT OR REPLACE INTO identity_keys (identifier, identity_key) VALUES (?, ?)', [identifier, identityKey]
+      );
+      console.log('Identity key inserted');
     } catch (error) {
       console.log(error);
     }
@@ -171,24 +190,18 @@ export class SignalProtocolStore {
         ('SELECT record FROM sessions WHERE identifier = ?', 'identifier');
       if (session) {
         console.log(session);
+        return session;
       }
       else {
         throw new Error("Session not found");
       }
     } catch (error) {
       console.log(error);
+      return null;
     }
   }
 
-  async saveIdentity(identifier, identityKey) {
-    try {
-      const result = this.db.runSync(
-        'INSERT OR REPLACE INTO identity_keys (identifier, identityKey) VALUES (?, ?)', [identifier, identityKey]
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
 
   async storeSession (identifier, record) {
     try {

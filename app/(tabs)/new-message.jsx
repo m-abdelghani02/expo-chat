@@ -12,8 +12,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import Constants from "expo-constants";
 import { StatusBar } from "expo-status-bar";
 import { io } from "socket.io-client";
-import { KeyHelper, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript";
+import { KeyHelper, SessionBuilder, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript";
 import {SignalProtocolStore} from '../../db/signalStoreSql';
+import Buffer from 'buffer';
 
 const NewMessage = () => {
   const [message, setMessage] = useState('');
@@ -67,13 +68,36 @@ const NewMessage = () => {
 
   useEffect(() => {
     const store = new SignalProtocolStore();
+    const address = new SignalProtocolAddress('test', 1)
     const setup = async () => {
       //await store.createSampleTable();
       //await store.insertIntoSampleData('Test Insert', 324)
       //await store.getSampleData();
-      await store.listAllTables();
-      await store.getIdentityKeyPair();
-      await store.removeAllSessions(1);
+     await store.listAllTables();
+      const keypair = await KeyHelper.generateIdentityKeyPair();
+      //const pubkey = Buffer.Buffer.from((keypair.pubKey))
+      //const privkey = Buffer.Buffer.from((keypair.privKey))
+      //console.log('pub keypair generated:', pubkey);
+      //console.log('priv keypair generated:', privkey);
+      await store.saveIdentity('test', keypair);
+      //const loadedIdentityKey = await store.loadIdentity('myself');
+      //console.log("loaded key", Buffer.Buffer.from(loadedIdentityKey)); 
+      //console.log("loaded priv key", Buffer.Buffer.from(loadedIdentityKey.privKey));
+      try {
+        const session = new SessionBuilder(store, address);
+        if (session) {
+          console.log('Session created');
+        }
+        else{
+          throw new Error("Session not created");
+        }
+        const identityKey = await session.storage.getIdentityKeyPair();
+        console.log("Identity key pair from session: ",identityKey);
+        await store.getSampleData();
+      } catch (error) {
+        console.log(error); 
+      }
+      
     };
     setup();
 
