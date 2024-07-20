@@ -54,7 +54,7 @@ export const wipeDatabase = async () => {
 
 export const populateSampleData = async () => {
   try {
-    // Use db.runSync for inserts
+    // Sample Users
     const sampleUsers = [
       { phone_number: '1234567890', username: 'Alice', public_key: 'alice_key', profile_pic: 'alice_pic' },
       { phone_number: '0987654321', username: 'Bob', public_key: 'bob_key', profile_pic: 'bob_pic' },
@@ -62,24 +62,26 @@ export const populateSampleData = async () => {
     ];
 
     sampleUsers.forEach(user => {
-      db.runSync('INSERT INTO Users (phone_number, username, public_key, profile_pic) VALUES (?, ?, ?, ?)', [user.phone_number, user.username, user.public_key, user.profile_pic]);
-      console.log('Inserted user:', user);
+      createUser(user);
+      console.log('Created user:', user);
     });
 
     console.log('Sample users inserted successfully');
 
+    // Sample Conversations
     const sampleConversations = [
       { conversation_id: 'convo1', user1_id: '1234567890', user2_id: '0987654321', last_message_id: null },
       { conversation_id: 'convo2', user1_id: '1234567890', user2_id: '5555555555', last_message_id: null }
     ];
 
     sampleConversations.forEach(conversation => {
-      db.runSync('INSERT INTO Conversations (conversation_id, user1_id, user2_id, last_message_id) VALUES (?, ?, ?, ?)', [conversation.conversation_id, conversation.user1_id, conversation.user2_id, conversation.last_message_id]);
-      console.log('Inserted conversation:', conversation);
+      createConversation(conversation);
+      console.log('Created conversation:', conversation);
     });
 
     console.log('Sample conversations inserted successfully');
 
+    // Sample Messages
     const sampleMessages = [
       { message_id: 'msg1', conversation_id: 'convo1', sender_id: '1234567890', recipient_id: '0987654321', content: 'Hello, Bob!' },
       { message_id: 'msg2', conversation_id: 'convo1', sender_id: '0987654321', recipient_id: '1234567890', content: 'Hi, Alice!' },
@@ -88,8 +90,8 @@ export const populateSampleData = async () => {
     ];
 
     sampleMessages.forEach(message => {
-      db.runSync('INSERT INTO Messages (message_id, conversation_id, sender_id, recipient_id, content) VALUES (?, ?, ?, ?, ?)', [message.message_id, message.conversation_id, message.sender_id, message.recipient_id, message.content]);
-      console.log('Inserted message:', message);
+      createMessage(message);
+      console.log('Created message:', message);
     });
 
     console.log('Sample messages inserted successfully');

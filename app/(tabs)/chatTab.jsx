@@ -24,6 +24,10 @@ import BottomBar from "../../components/BottomBar";
 import ChatItem from "../../components/ChatItem";
 import ChatList from "../../components/ChatList";
 import { checkTableContents, initDatabase, populateSampleData, wipeDatabase } from "../../db/dbService";
+import { getConversationById, getConversations } from "../../services/conversationService";
+import { getConversationMessages } from "../../services/messageService";
+import { authService } from "../../services/authService";
+import userService from "../../services/userService";
 
 const Chat = () => {
 
@@ -31,14 +35,18 @@ const Chat = () => {
   useEffect(() => {
     const runTests = async () => {
       try {
-        // Wipe the database to start fresh
         await wipeDatabase();
-        
-        // Populate with sample data
         await populateSampleData();
-        
-        // Check table contents
-        await checkTableContents();
+        //await checkTableContents();
+        console.log("\nGetting Convos...");
+        await getConversations();
+        console.log("\nGetting Convo by ID...");
+        await getConversationById('convo1');
+        console.log("\nGetting User...");
+        authService.getUser();
+        console.log("Getting user by ID...");
+        const userById = userService.getUserById('1234567890');
+        //console.log(userById);
       } catch (error) {
         console.error('Error running tests:', error);
       }
@@ -50,6 +58,8 @@ const Chat = () => {
 
 
   ////////
+
+  
 
 
   const conversations = [

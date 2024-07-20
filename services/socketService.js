@@ -1,9 +1,9 @@
-import * as io from 'socket.io-client';
+import {io} from 'socket.io-client';
 
-let socket;
+export let socket;
 
 //const connect = (token) => {
-  if (socket) return; // Avoid reconnection attempts
+  //if (socket) return; // Avoid reconnection attempts
   socket = io('http://your-server-address', { // Replace with your server address
     //query: { token }, // Include authentication token in query
   });
@@ -22,7 +22,7 @@ let socket;
   });
 //};
 
-const emit = (eventName, data) => {
+export const emit = (eventName, data) => {
   if (socket) {
     socket.emit(eventName, data);
   } else {
@@ -30,9 +30,8 @@ const emit = (eventName, data) => {
   }
 };
 
-const disconnect = () => {
+export const disconnect = () => {
   if (socket) socket.disconnect();
   socket = null;
 };
 
-export { socket, connect, emit, disconnect };
