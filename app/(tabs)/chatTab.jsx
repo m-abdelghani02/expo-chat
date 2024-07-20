@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
@@ -23,8 +23,35 @@ import { Picker } from "@react-native-picker/picker";
 import BottomBar from "../../components/BottomBar";
 import ChatItem from "../../components/ChatItem";
 import ChatList from "../../components/ChatList";
+import { checkTableContents, initDatabase, populateSampleData, wipeDatabase } from "../../db/dbService";
 
 const Chat = () => {
+
+  ////////Testing DB
+  useEffect(() => {
+    const runTests = async () => {
+      try {
+        // Wipe the database to start fresh
+        await wipeDatabase();
+        
+        // Populate with sample data
+        await populateSampleData();
+        
+        // Check table contents
+        await checkTableContents();
+      } catch (error) {
+        console.error('Error running tests:', error);
+      }
+    };
+
+    // Run the tests when the component mounts
+    runTests();
+  }, []);
+
+
+  ////////
+
+
   const conversations = [
     {
       id: 1,
