@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabaseSync('engima_test_3.db');
+const db = SQLite.openDatabaseSync('engima_test_4.db');
 
 export const initDatabase = async () => {
   try {
@@ -58,7 +58,10 @@ export const populateSampleData = async () => {
     const sampleUsers = [
       { phone_number: '1234567890', username: 'Alice', public_key: 'alice_key', profile_pic: 'alice_pic' },
       { phone_number: '0987654321', username: 'Bob', public_key: 'bob_key', profile_pic: 'bob_pic' },
-      { phone_number: '5555555555', username: 'Charlie', public_key: 'charlie_key', profile_pic: 'charlie_pic' }
+      { phone_number: '5555555555', username: 'Charlie', public_key: 'charlie_key', profile_pic: 'charlie_pic' },
+      { phone_number: '1122334455', username: 'David', public_key: 'david_key', profile_pic: 'david_pic' },
+      { phone_number: '5566778899', username: 'Eve', public_key: 'eve_key', profile_pic: 'eve_pic' },
+      { phone_number: '6677889900', username: 'Frank', public_key: 'frank_key', profile_pic: 'frank_pic' }
     ];
 
     sampleUsers.forEach(user => {
@@ -70,8 +73,10 @@ export const populateSampleData = async () => {
 
     // Sample Conversations
     const sampleConversations = [
-      { conversation_id: 'convo1', user1_id: '1234567890', user2_id: '0987654321', last_message_id: null },
-      { conversation_id: 'convo2', user1_id: '1234567890', user2_id: '5555555555', last_message_id: null }
+      { conversation_id: 'convo1', user1_id: '1234567890', user2_id: '0987654321', last_message_id: 'msg6' },
+      { conversation_id: 'convo2', user1_id: '1234567890', user2_id: '5555555555', last_message_id: 'msg12' },
+      { conversation_id: 'convo3', user1_id: '5555555555', user2_id: '1122334455', last_message_id: 'msg18' },
+      { conversation_id: 'convo4', user1_id: '5566778899', user2_id: '6677889900', last_message_id: 'msg24' }
     ];
 
     sampleConversations.forEach(conversation => {
@@ -83,10 +88,37 @@ export const populateSampleData = async () => {
 
     // Sample Messages
     const sampleMessages = [
-      { message_id: 'msg1', conversation_id: 'convo1', sender_id: '1234567890', recipient_id: '0987654321', content: 'Hello, Bob!' },
-      { message_id: 'msg2', conversation_id: 'convo1', sender_id: '0987654321', recipient_id: '1234567890', content: 'Hi, Alice!' },
-      { message_id: 'msg3', conversation_id: 'convo2', sender_id: '1234567890', recipient_id: '5555555555', content: 'Hey, Charlie!' },
-      { message_id: 'msg4', conversation_id: 'convo2', sender_id: '5555555555', recipient_id: '1234567890', content: 'What\'s up, Alice?' }
+      // Messages for convo1
+      { message_id: 'msg1', conversation_id: 'convo1', sender_id: '1234567890', recipient_id: '0987654321', content: 'Hey Bob, how’s it going?', timestamp: '2024-07-21 09:00:00' },
+      { message_id: 'msg2', conversation_id: 'convo1', sender_id: '0987654321', recipient_id: '1234567890', content: 'Hi Alice! I’m doing well, thanks. How about you?', timestamp: '2024-07-21 09:05:00' },
+      { message_id: 'msg3', conversation_id: 'convo1', sender_id: '1234567890', recipient_id: '0987654321', content: 'I’m good too! Just wanted to check in and see if we’re still on for lunch later.', timestamp: '2024-07-21 09:10:00' },
+      { message_id: 'msg4', conversation_id: 'convo1', sender_id: '0987654321', recipient_id: '1234567890', content: 'Yes, absolutely. Looking forward to it!', timestamp: '2024-07-21 09:15:00' },
+      { message_id: 'msg5', conversation_id: 'convo1', sender_id: '1234567890', recipient_id: '0987654321', content: 'Great! See you soon then.', timestamp: '2024-07-21 09:20:00' },
+      { message_id: 'msg6', conversation_id: 'convo1', sender_id: '0987654321', recipient_id: '1234567890', content: 'See you! 😊', timestamp: '2024-07-21 09:25:00' },
+      
+      // Messages for convo2
+      { message_id: 'msg7', conversation_id: 'convo2', sender_id: '1234567890', recipient_id: '5555555555', content: 'Hey Charlie, long time no see!', timestamp: '2024-07-21 10:00:00' },
+      { message_id: 'msg8', conversation_id: 'convo2', sender_id: '5555555555', recipient_id: '1234567890', content: 'Alice! It’s been a while. How have you been?', timestamp: '2024-07-21 10:05:00' },
+      { message_id: 'msg9', conversation_id: 'convo2', sender_id: '1234567890', recipient_id: '5555555555', content: 'I’ve been great, thanks. Just got back from a vacation.', timestamp: '2024-07-21 10:10:00' },
+      { message_id: 'msg10', conversation_id: 'convo2', sender_id: '5555555555', recipient_id: '1234567890', content: 'Sounds amazing! Where did you go?', timestamp: '2024-07-21 10:15:00' },
+      { message_id: 'msg11', conversation_id: 'convo2', sender_id: '1234567890', recipient_id: '5555555555', content: 'I went to Hawaii. It was incredible. I’ll share some pictures with you soon.', timestamp: '2024-07-21 10:20:00' },
+      { message_id: 'msg12', conversation_id: 'convo2', sender_id: '5555555555', recipient_id: '1234567890', content: 'Can’t wait to see them!', timestamp: '2024-07-21 10:25:00' },
+
+      // Messages for convo3
+      { message_id: 'msg13', conversation_id: 'convo3', sender_id: '5555555555', recipient_id: '1122334455', content: 'Hi David, ready for the meeting tomorrow?', timestamp: '2024-07-21 11:00:00' },
+      { message_id: 'msg14', conversation_id: 'convo3', sender_id: '1122334455', recipient_id: '5555555555', content: 'Yes, I am. Do we have an agenda?', timestamp: '2024-07-21 11:05:00' },
+      { message_id: 'msg15', conversation_id: 'convo3', sender_id: '5555555555', recipient_id: '1122334455', content: 'Yes, I’ll send it over to you shortly.', timestamp: '2024-07-21 11:10:00' },
+      { message_id: 'msg16', conversation_id: 'convo3', sender_id: '1122334455', recipient_id: '5555555555', content: 'Thanks! Looking forward to it.', timestamp: '2024-07-21 11:15:00' },
+      { message_id: 'msg17', conversation_id: 'convo3', sender_id: '5555555555', recipient_id: '1122334455', content: 'No problem! If you have any questions, just let me know.', timestamp: '2024-07-21 11:20:00' },
+      { message_id: 'msg18', conversation_id: 'convo3', sender_id: '1122334455', recipient_id: '5555555555', content: 'Will do. Thanks!', timestamp: '2024-07-21 11:25:00' },
+
+      // Messages for convo4
+      { message_id: 'msg19', conversation_id: 'convo4', sender_id: '5566778899', recipient_id: '6677889900', content: 'Hey Frank, what’s the update on the project?', timestamp: '2024-07-21 12:00:00' },
+      { message_id: 'msg20', conversation_id: 'convo4', sender_id: '6677889900', recipient_id: '5566778899', content: 'We’re almost done. Just need to finalize a few details.', timestamp: '2024-07-21 12:05:00' },
+      { message_id: 'msg21', conversation_id: 'convo4', sender_id: '5566778899', recipient_id: '6677889900', content: 'Great. Can we review it together later today?', timestamp: '2024-07-21 12:10:00' },
+      { message_id: 'msg22', conversation_id: 'convo4', sender_id: '6677889900', recipient_id: '5566778899', content: 'Sure, I’m available after 3 PM.', timestamp: '2024-07-21 12:15:00' },
+      { message_id: 'msg23', conversation_id: 'convo4', sender_id: '5566778899', recipient_id: '6677889900', content: 'Perfect, I’ll schedule a time.', timestamp: '2024-07-21 12:20:00' },
+      { message_id: 'msg24', conversation_id: 'convo4', sender_id: '6677889900', recipient_id: '5566778899', content: 'Looking forward to it!', timestamp: '2024-07-21 12:25:00' }
     ];
 
     sampleMessages.forEach(message => {
@@ -99,6 +131,7 @@ export const populateSampleData = async () => {
     console.log('Error inserting sample data:', error);
   }
 };
+
 
 export const checkTableContents = async () => {
   try {

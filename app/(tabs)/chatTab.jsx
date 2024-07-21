@@ -32,8 +32,8 @@ import useConversations from "../../hooks/useConversations";
 
 const Chat = () => {
   
-/*   ////////Testing DB
-  useEffect(() => {
+  ////////Testing DB
+/*   useEffect(() => {
     const runTests = async () => {
       try {
         await wipeDatabase();
