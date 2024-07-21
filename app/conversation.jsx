@@ -135,7 +135,7 @@ const Conversation = () => {
     return messages.map((message) => ({
       id: message.message_id,
       text: message.content,
-      type: message.sender_id === authService.getUser().id ? 'sent' : 'received',
+      type: message.sender_id === authService.getUser().phone_number ? 'sent' : 'received',
       time: formatTimestamp(message.timestamp),
       isRead: false,
     }));

@@ -45,7 +45,7 @@ const ProfileSetup = () => {
   const handleSaveProfile = async () => {
     try {
       const user = {
-        id: phoneNumber,
+        phone_number: phoneNumber,
         username: name,
         public_key: 'default',
         profile_pic: 'default', // Use selectedImage for profile picture

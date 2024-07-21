@@ -19,7 +19,7 @@ import { createConversation, getConversationById, getConversations, updateLastMe
 import * as socketService from '../../services/socketService';
 import { MaterialIcons } from "@expo/vector-icons"; 
 import { createConversationHandler } from "../../handlers/createConversationHandler";
-import { createMessage, createUser, getUsers, updateUserNumber, wipeDatabase } from "../../db/dbService";
+import { createMessage, createUser, getUsers, initDatabase, updateUserNumber, wipeDatabase } from "../../db/dbService";
 import { authService } from "../../services/authService";
 import userService from "../../services/userService";
 
@@ -27,16 +27,17 @@ import userService from "../../services/userService";
 const Chat = () => {
   
   ////////Testing DB
-/*   useEffect(() => {
+  /* useEffect(() => {
     const runTests = async () => {
       try {
-        await wipeDatabase();
+        //await wipeDatabase();
         //await populateSampleData();
         //await checkTableContents();
+        await initDatabase()
         console.log("\nGetting Convos...");
         await getConversations();
-        console.log("\nGetting Convo by ID...");
-        await getConversationById('convo1');
+        console.log("\nGetting Users...");
+        await getUsers();
         console.log("\nGetting User...");
         authService.getUser();
         console.log("Getting user by ID...");
@@ -88,38 +89,42 @@ const Chat = () => {
     };
 
     const handleConversationCreated = ({ sender_id, recipient_id, username }) => {
-      Alert.alert('New Conversation', `A new conversation has been created! Sender ID: ${sender_id}, Recipient ID: ${recipient_id}, Username: ${username}`);
       try {
-        // Show alert with conversation details
-        Alert.alert('New Conversation', `A new conversation has been created! Sender ID: ${sender_id}, Recipient ID: ${recipient_id}, Username: ${username}`);
-        const conversationId = [sender_id, recipient_id].sort().join('_');
         // Create user if not exists
         createUser({
-          phone_number: sender_id, 
-          username: username, 
+          phone_number: sender_id,
+          username: username,
           public_key: 'default_public_key',
           profile_pic: 'default_profile_pic',
         });
-
+    
+        createUser({
+          phone_number: recipient_id,
+          username: username,
+          public_key: 'default_public_key',
+          profile_pic: 'default_profile_pic',
+        });
+    
+        const conversationId = [sender_id, recipient_id].sort().join('_');
+        
         // Create conversation
         const newConversation = {
-          conversation_id: conversationId, // Example ID generation
-          user1_id: recipient_id, // Current user's ID
-          user2_id: sender_id, // The phone number or ID of the recipient
-          last_message_id: null, // Initial last message ID
+          conversation_id: conversationId,
+          user1_id: recipient_id,
+          user2_id: sender_id,
+          last_message_id: null,
         };
         createConversation(newConversation);
-        console.log('Conversation created:', newConversation);
+    
         createMessage({ message_id: 'message1', conversation_id: conversationId, sender_id, recipient_id, content: 'Hello' });
         updateLastMessageId({ conversation_id: conversationId, last_message_id: 'message1' });
-        
+    
         fetchConversations();
-
       } catch (error) {
         console.log('Error handling conversation creation:', error);
       }
     };
-
+    
     const initialize = async () => {
       await connectSocket();
       fetchConversations();

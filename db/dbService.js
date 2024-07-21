@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabaseSync('engima_test_5.db');
+const db = SQLite.openDatabaseSync('engima_test_6.db');
 
 export const initDatabase = async () => {
   try {
@@ -150,6 +150,7 @@ export const checkTableContents = async () => {
 
 export const createUser = ({ phone_number, username, public_key, profile_pic }) => {
   try {
+    console.log('Creating user:', { phone_number, username, public_key, profile_pic });
     db.runSync('INSERT INTO Users (phone_number, username, public_key, profile_pic) VALUES (?, ?, ?, ?)', [phone_number, username, public_key, profile_pic]);
     console.log('User created successfully');
   } catch (error) {

@@ -4,7 +4,7 @@ export let socket;
 
 export const connect = async () => {
   const user = await authService.getUser();
-  const userId = user.id;
+  const userId = user.phone_number;
   socket = io('http://192.168.1.20:3000'); 
   socket.on('connect', () => {
     console.log('Connected to socket server');

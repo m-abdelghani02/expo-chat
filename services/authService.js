@@ -2,7 +2,7 @@
 export const authService = {
     
     user: {
-        id: '1234567890',
+        phone_number: '1234567890',
         username: 'currentUser',
         profile_pic: null
     },
