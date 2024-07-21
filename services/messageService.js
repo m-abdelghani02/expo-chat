@@ -30,6 +30,33 @@ const sendMessage = async ({ message_id, conversation_id, sender_id, recipient_i
   }
 };
 
+
+// Handle a new message and update the corresponding conversation
+const receiveMessage = async (message) => {
+  try {
+    const { message_id, conversation_id, sender_id, recipient_id, content } = message;
+    
+    // Check if the message already exists in the database
+    const existingMessage = dbService.getMessage(message_id);
+    if (!existingMessage) {
+      // Create the new message
+      console.log('Trying to create new message from recieved:', message);
+      dbService.createMessage(message);
+      console.log('New message added to the database:', message);
+      
+      // Update conversation with the new message ID
+      dbService.updateConversation({ conversation_id, last_message_id: message_id });
+      
+      // Update the user's last message ID
+      await dbService.updateUserLastMessageId(recipient_id, message_id);
+    } else {
+      console.log('Message already exists:', existingMessage);
+    }
+  } catch (error) {
+    console.error('Error handling new message:', error);
+  }
+};
+
 const getConversationMessages = async (conversationId) => {
   try {
     const messages = dbService.getMessages(conversationId);
@@ -40,4 +67,4 @@ const getConversationMessages = async (conversationId) => {
   }
 };
 
-export { sendMessage, getConversationMessages };
+export { sendMessage, receiveMessage, getConversationMessages };

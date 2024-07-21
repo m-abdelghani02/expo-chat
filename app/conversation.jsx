@@ -19,6 +19,7 @@ import * as ImagePicker from 'expo-image-picker'
 import {getConversationMessages} from '../services/messageService';
 import { sendMessageHandler } from '../handlers/sendMessageHandler.js'; 
 import { getConversationById } from "../services/conversationService";
+import { authService } from "../services/authService";
 
 const Conversation = () => {
   const item = useLocalSearchParams();
@@ -103,27 +104,13 @@ const Conversation = () => {
     }
   };
   
-/*   const sendMessageHandler = () => {
-    if (messageText) {
-      setMessages([
-        ...messages,
-        {
-          id: uuid.v4(),
-          text: messageText,
-          type: "sent",
-          time: "13:43",
-          isRead: false,
-        },
-      ]);
-      setMessageText("");
-    }
-  }; */
+
 
   const transformMessages = (messages) => {
     return messages.map((message) => ({
       id: message.message_id, // Generating a new unique ID
       text: message.content, // Mapping the 'content' field
-      type: message.sender_id === '1234567890' ? 'sent' : 'received', // Determining message type based on HARDCODED sender_id
+      type: message.sender_id === authService.getUser().id ? 'sent' : 'received', // Determining message type based on HARDCODED sender_id
       time: formatTimestamp(message.timestamp), // Formatting the timestamp
       isRead: false, // Assuming all messages are unread initially
     }));
