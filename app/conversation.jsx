@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   View,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Text,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Constants from "expo-constants";
@@ -15,11 +16,39 @@ import MessageList from "../components/MessageList";
 import { Ionicons } from "@expo/vector-icons";
 import uuid from "react-native-uuid"; // Import uuid
 import * as ImagePicker from 'expo-image-picker'
+import {getConversationMessages} from '../services/messageService';
 
 const Conversation = () => {
   const item = useLocalSearchParams();
+  const conversationId = Object.values(item).join('');
   const router = useRouter();
   const [messageText, setMessageText] = useState("");
+  const [convMessages, setConvMessages] = useState([])
+  //const convMessages = getConversationMessages(item.conversationId);
+  useEffect(() => {
+    console.log('Conversation ID:', conversationId);
+    const fetchMessages = async () => {
+      try {
+        const conversationMessages = await getConversationMessages(conversationId);
+        console.log('Fetched Messages:', conversationMessages);
+
+        // Transforming the messages
+        const transformedMessages = transformMessages(conversationMessages);
+        setMessages(transformedMessages);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
+
+    fetchMessages();
+  }, [conversationId]);
+  
+  useEffect(() => {
+    console.log('Conversation Messages State:', convMessages);
+  }, [convMessages]);
+
+  
+  
   const [messages, setMessages] = useState([
     {
       id: uuid.v4(),
@@ -67,6 +96,25 @@ const Conversation = () => {
     }
   };
 
+  const transformMessages = (messages) => {
+    return messages.map((message) => ({
+      id: message.message_id, // Generating a new unique ID
+      text: message.content, // Mapping the 'content' field
+      type: message.sender_id === '1234567890' ? 'sent' : 'received', // Determining message type based on sender_id
+      time: formatTimestamp(message.timestamp), // Formatting the timestamp
+      isRead: false, // Assuming all messages are unread initially
+    }));
+  };
+  
+  // Utility function to format timestamp
+  const formatTimestamp = (timestamp) => {
+    // Convert timestamp to HH:MM format (for example)
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+
+
     const handleKeyPress = (event) => {
     if (event.nativeEvent.key === "Enter") {
       sendMessageHandler();
@@ -85,7 +133,7 @@ const Conversation = () => {
       setSelectedImage(result.assets[0].uri);
     } 
   }
-
+  
   return (
     <View className="flex-1">
       <StatusBar style="light" />
@@ -97,7 +145,6 @@ const Conversation = () => {
       <View className="bg-[#141414] w-full h-28 "></View>
 
       <View className="flex-1 justify-between overflow-visible">
-
         <View className="flex-1">
           <MessageList messages={messages} />
         </View>

@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 const ChatList = ({ conversations}) => {
     const router = useRouter();
 
-    const parseTimestamp = (timestamp) => {
+/*     const parseTimestamp = (timestamp) => {
       const [time, period] = timestamp.split(' ');
       const [hours, minutes] = time.split(':').map(Number);
       let totalMinutes = hours * 60 + minutes;
@@ -20,18 +20,19 @@ const ChatList = ({ conversations}) => {
       const timeA = parseTimestamp(a.timestamp);
       const timeB = parseTimestamp(b.timestamp);
       return timeA - timeB;
-    });
+    }); */
+
 
     return (
       <ScrollView className="flex-1 mb-24">
-        {sortedConversations.map((conversation) => (
+        {conversations.map((conversation) => (
           <ChatItem
-            key={conversation.id} // Assuming conversations have unique IDs
+            key={conversation.conversation_id} // Assuming conversations have unique IDs
 /*             name={conversation.participantName} // Get participant name from conversation object
             lastMessage={conversation.lastMessage} // Get last message from conversation object
             timestamp={conversation.timestamp} // Get timestamp from conversation object
             readStatus={conversation.readStatus} // Get read status from conversation object */
-            item={conversation}
+            conversation={conversation}
             router={router}
           />
       ))}

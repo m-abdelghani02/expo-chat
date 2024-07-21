@@ -28,10 +28,11 @@ import { getConversationById, getConversations } from "../../services/conversati
 import { getConversationMessages } from "../../services/messageService";
 import { authService } from "../../services/authService";
 import userService from "../../services/userService";
+import useConversations from "../../hooks/useConversations";
 
 const Chat = () => {
-
-  ////////Testing DB
+  
+/*   ////////Testing DB
   useEffect(() => {
     const runTests = async () => {
       try {
@@ -46,6 +47,8 @@ const Chat = () => {
         authService.getUser();
         console.log("Getting user by ID...");
         const userById = userService.getUserById('1234567890');
+        const conversationss = await getConversations();
+        console.log('Conversations from hook :', conversationss);
         //console.log(userById);
       } catch (error) {
         console.error('Error running tests:', error);
@@ -54,156 +57,29 @@ const Chat = () => {
 
     // Run the tests when the component mounts
     runTests();
-  }, []);
+  }, []); */
 
 
   ////////
+  const [conversations, setConversations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const fetchedConversations = await getConversations();
+        setConversations(fetchedConversations);
+        console.log('Convoooooooos:', fetchedConversations);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-
-  const conversations = [
-    {
-      id: 1,
-      participantName: "Alice Johnson",
-      lastMessage: "Hello!",
-      timestamp: "9:40 PM",
-      readStatus: true,
-    },
-    {
-      id: 2,
-      participantName: "Bob Smith",
-      lastMessage: "Sure thing.",
-      timestamp: "9:35 AM",
-      readStatus: true,
-    },
-    {
-      id: 3,
-      participantName: "Eve Brown",
-      lastMessage: "See you there!",
-      timestamp: "9:45 AM",
-      readStatus: false,
-    },
-    {
-      id: 4,
-      participantName: "Charlie Davis",
-      lastMessage: "What's up?",
-      timestamp: "9:50 AM",
-      readStatus: true,
-    },
-    {
-      id: 5,
-      participantName: "Grace Lee",
-      lastMessage: "Not sure about that.",
-      timestamp: "10:00 AM",
-      readStatus: false,
-    },
-    {
-      id: 6,
-      participantName: "David Wilson",
-      lastMessage: "Got it, thanks!",
-      timestamp: "10:10 AM",
-      readStatus: true,
-    },
-    {
-      id: 7,
-      participantName: "Sophia Garcia",
-      lastMessage: "Sounds good.",
-      timestamp: "10:15 AM",
-      readStatus: true,
-    },
-    {
-      id: 8,
-      participantName: "James Taylor",
-      lastMessage: "See you later.",
-      timestamp: "10:20 AM",
-      readStatus: false,
-    },
-    {
-      id: 9,
-      participantName: "Olivia Martinez",
-      lastMessage: "Let me check.",
-      timestamp: "10:30 AM",
-      readStatus: true,
-    },
-    {
-      id: 10,
-      participantName: "Lucas Rodriguez",
-      lastMessage: "Can't wait!",
-      timestamp: "10:40 AM",
-      readStatus: true,
-    },
-    {
-      id: 11,
-      participantName: "Lily Hernandez",
-      lastMessage: "Will do.",
-      timestamp: "10:50 AM",
-      readStatus: false,
-    },
-    {
-      id: 12,
-      participantName: "Mateo Perez",
-      lastMessage: "Got your message.",
-      timestamp: "11:00 AM",
-      readStatus: true,
-    },
-    {
-      id: 13,
-      participantName: "Emma Flores",
-      lastMessage: "Sure thing!",
-      timestamp: "11:10 AM",
-      readStatus: true,
-    },
-    {
-      id: 14,
-      participantName: "Sebastian Sanchez",
-      lastMessage: "Maybe later.",
-      timestamp: "11:20 AM",
-      readStatus: false,
-    },
-    {
-      id: 15,
-      participantName: "Isabella Rivera",
-      lastMessage: "Busy right now.",
-      timestamp: "11:30 AM",
-      readStatus: true,
-    },
-    {
-      id: 16,
-      participantName: "Alexander Gomez",
-      lastMessage: "Let's talk.",
-      timestamp: "11:40 AM",
-      readStatus: true,
-    },
-    {
-      id: 17,
-      participantName: "Sofia Diaz",
-      lastMessage: "Tomorrow works.",
-      timestamp: "11:50 AM",
-      readStatus: false,
-    },
-    {
-      id: 18,
-      participantName: "Benjamin Torres",
-      lastMessage: "Sure thing.",
-      timestamp: "12:00 PM",
-      readStatus: true,
-    },
-    {
-      id: 19,
-      participantName: "Victoria Ramirez",
-      lastMessage: "Not sure about that.",
-      timestamp: "12:10 PM",
-      readStatus: false,
-    },
-    {
-      id: 20,
-      participantName: "Daniel Cruz",
-      lastMessage: "Thanks a lot!",
-      timestamp: "12:20 PM",
-      readStatus: true,
-    },
-  ];
+    fetchConversations();
+  }, []);
 
   return (
     <View className="flex-1">
@@ -215,6 +91,13 @@ const Chat = () => {
       <View className="bg-[#141414] h-32 justify-center pl-6 pt-10 mb-5">
         <Text className="text-white font-pmedium text-4xl ">Chat</Text>
       </View>
+{/*       {loading ? (
+      <Text>Loading...</Text>
+    ) : error ? (
+      <Text>Error loading conversations</Text>
+    ) : (
+      <Text className='text-white'>Conversations: {conversations[0].conversation_id}</Text>
+    )} */}
 
       <ChatList conversations={conversations}  />
 {/*       <View className='absolute -bottom-4 w-full z-10'>
