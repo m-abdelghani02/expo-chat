@@ -1,10 +1,16 @@
 import { View, Text, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import ChatItem from './ChatItem'
 import { useRouter } from 'expo-router';
 
 const ChatList = ({ conversations}) => {
     const router = useRouter();
+    useEffect(() => {
+      console.log('Conversations inside ChatList: ', conversations);
+    
+
+    }, [])
+    
 
 /*     const parseTimestamp = (timestamp) => {
       const [time, period] = timestamp.split(' ');
@@ -25,17 +31,17 @@ const ChatList = ({ conversations}) => {
 
     return (
       <ScrollView className="flex-1 mb-24">
-        {conversations.map((conversation) => (
-          <ChatItem
-            key={conversation.conversation_id} // Assuming conversations have unique IDs
-/*             name={conversation.participantName} // Get participant name from conversation object
-            lastMessage={conversation.lastMessage} // Get last message from conversation object
-            timestamp={conversation.timestamp} // Get timestamp from conversation object
-            readStatus={conversation.readStatus} // Get read status from conversation object */
-            conversation={conversation}
-            router={router}
-          />
-      ))}
+        {conversations.length > 0 ? (
+          conversations.map((conversation) => (
+            <ChatItem
+              key={conversation.conversation_id}
+              conversation={conversation}
+              router={router}
+            />
+          ))
+        ) : (
+          <Text>No conversations available</Text>
+        )}
       </ScrollView>
     );
   };

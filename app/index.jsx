@@ -1,13 +1,16 @@
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Constants from 'expo-constants';
 import { StatusBar } from "expo-status-bar";
 import OnboardingButton from "../components/OnboardingButton";
+import * as socketService from '../services/socketService';
 const App = () => {
   console.log(height);
+
+  
   return (
     
     <View className='flex-1'> 

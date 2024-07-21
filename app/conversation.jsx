@@ -17,6 +17,8 @@ import { Ionicons } from "@expo/vector-icons";
 import uuid from "react-native-uuid"; // Import uuid
 import * as ImagePicker from 'expo-image-picker'
 import {getConversationMessages} from '../services/messageService';
+import { sendMessageHandler } from '../handlers/sendMessageHandler.js'; 
+import { getConversationById } from "../services/conversationService";
 
 const Conversation = () => {
   const item = useLocalSearchParams();
@@ -24,6 +26,9 @@ const Conversation = () => {
   const router = useRouter();
   const [messageText, setMessageText] = useState("");
   const [convMessages, setConvMessages] = useState([])
+  const [messages, setMessages] = useState([]);
+  const [convDetails, setConvDetails] = useState({});
+  const [user2_id, setUser2_id] = useState('');
   //const convMessages = getConversationMessages(item.conversationId);
   useEffect(() => {
     console.log('Conversation ID:', conversationId);
@@ -39,48 +44,66 @@ const Conversation = () => {
         console.error('Error fetching messages:', error);
       }
     };
-
+    const fetchConvDetails = async () => {
+      try {
+        const convDetails = await getConversationById(conversationId);
+        setConvDetails(convDetails);
+        setUser2_id(convDetails.user2_id);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchConvDetails();
     fetchMessages();
   }, [conversationId]);
   
   useEffect(() => {
     console.log('Conversation Messages State:', convMessages);
-  }, [convMessages]);
+    console.log('Conversation Details State:', convDetails);
+    console.log('Conversation Recipient State:', user2_id);
+  }, [convMessages, convDetails, user2_id]);
 
   
   
-  const [messages, setMessages] = useState([
-    {
-      id: uuid.v4(),
-      text: "Good Afternoon!",
-      type: "received",
-      time: "12:34",
-      isRead: true,
-    },
-    {
-      id: uuid.v4(),
-      text: "Lorem ipsum",
+  const sendMessage = async () => {
+    const newMessageId = uuid.v4();
+    const newMessage = {
+      id: newMessageId,
+      text: messageText,
       type: "sent",
-      time: "11:57",
-      isRead: true,
-    },
-    {
-      id: uuid.v4(),
-      text: "Suspendisse pretium, purus",
-      type: "sent",
-      time: "12:40",
-      isRead: true,
-    },
-    {
-      id: uuid.v4(),
-      text: "Aenean lobortis gravida quo augue, sed tristique",
-      type: "sent",
-      time: "13:43",
+      time: formatTimestamp(new Date()), // Current time
       isRead: false,
-    },
-  ]);
+      status: "pending", // Mark as pending initially
+    };
 
-  const sendMessageHandler = () => {
+    // Optimistically update the UI
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setMessageText("");
+
+    const sentMessageData = { conversationId, content: messageText, recipient_id: user2_id };
+    console.log("Sending from conversation", sentMessageData);
+
+    const success = await sendMessageHandler(sentMessageData);
+
+    if (success) {
+      // Update the message status to sent
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === newMessageId ? { ...msg, status: "sent" } : msg
+        )
+      );
+    } else {
+      // Update the message status to failed
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === newMessageId ? { ...msg, status: "failed" } : msg
+        )
+      );
+      console.error('Error sending message');
+    }
+  };
+  
+/*   const sendMessageHandler = () => {
     if (messageText) {
       setMessages([
         ...messages,
@@ -94,13 +117,13 @@ const Conversation = () => {
       ]);
       setMessageText("");
     }
-  };
+  }; */
 
   const transformMessages = (messages) => {
     return messages.map((message) => ({
       id: message.message_id, // Generating a new unique ID
       text: message.content, // Mapping the 'content' field
-      type: message.sender_id === '1234567890' ? 'sent' : 'received', // Determining message type based on sender_id
+      type: message.sender_id === '1234567890' ? 'sent' : 'received', // Determining message type based on HARDCODED sender_id
       time: formatTimestamp(message.timestamp), // Formatting the timestamp
       isRead: false, // Assuming all messages are unread initially
     }));
@@ -115,11 +138,6 @@ const Conversation = () => {
 
 
 
-    const handleKeyPress = (event) => {
-    if (event.nativeEvent.key === "Enter") {
-      sendMessageHandler();
-    }
-  };
 
   const openPicker = async (selectType) => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -174,7 +192,7 @@ const Conversation = () => {
             </View>
             <TouchableOpacity
               className="ml-3 p-3 rounded-full bg-[#3400A1]"
-              onPress={sendMessageHandler}
+              onPress={sendMessage}
             >
               <Ionicons name="send" size={20} color="white" />
             </TouchableOpacity>

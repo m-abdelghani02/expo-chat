@@ -14,6 +14,7 @@ import { StatusBar } from "expo-status-bar";
 import { io } from "socket.io-client";
 import { KeyHelper, SessionBuilder, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript";
 import {SignalProtocolStore} from '../../db/signalStoreSql';
+import {socket as socketInstance} from '../../services/socketService';
 //import {SignalProtocolStore} from '../../storage-type';
 import Buffer from 'buffer';
 
@@ -28,11 +29,12 @@ const NewMessage = () => {
   };
 
   useEffect(() => {
-    const socketInstance = io('http://192.168.1.20:3000');
+    //const socketInstance = io('http://192.168.1.20:3000');
+    
     setSocket(socketInstance);
-
+    
     socketInstance.on('chat message', (message) => {
-      Alert.alert('Server response:', message);
+      Alert.alert('Server response:', JSON.stringify(message));
     });
 
     socketInstance.on('allClientIDs', (clientIDs) => {
@@ -43,7 +45,10 @@ const NewMessage = () => {
     socketInstance.on('private message', (message) => {
       Alert.alert('Private message:', message);
     });
-
+    socketInstance.on('conversationCreated', ({sender_id, recipient_id}) => {
+      console.log('New Conversation', 'A new conversation has been created!', sender_id, recipient_id);
+      Alert.alert('New Conversation', `A new conversation has been created! Sender ID: ${sender_id}, Recipient ID: ${recipient_id}`);
+    });
     return () => {
       socketInstance.disconnect();
     };

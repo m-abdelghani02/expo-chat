@@ -14,6 +14,7 @@ import * as ImagePicker from 'expo-image-picker'
 import { Platform } from "expo-modules-core";
 import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView';
 import { authService } from '../../services/authService';
+import { createUser } from "../../db/dbService";
 
 const ProfileSetup = () => {
   
@@ -41,16 +42,27 @@ const ProfileSetup = () => {
     } 
   }
 
-  const handleSaveProfile = () => {
-    const user = {
-      id: phoneNumber,
-      username: name,
-      profile_pic: null, // Null for now
+  const handleSaveProfile = async () => {
+    try {
+      const user = {
+        id: phoneNumber,
+        username: name,
+        public_key: 'default',
+        profile_pic: 'default', // Use selectedImage for profile picture
+      };
 
-    };
-    authService.setUser(user); // Set the user in authService
-    console.log('User set', authService.getUser()); 
-    router.push('/chatTab'); // Push to chat screen after setting user
+      // Save user to database
+      //createUser(user);
+
+      // Set the user in authService
+      authService.setUser(user);
+      console.log('User set', authService.getUser());
+
+      // Navigate to chat screen
+      router.push('/chatTab');
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    }
   };
   return (
     

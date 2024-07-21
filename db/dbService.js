@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabaseSync('engima_test_4.db');
+const db = SQLite.openDatabaseSync('engima_test_5.db');
 
 export const initDatabase = async () => {
   try {
@@ -151,6 +151,7 @@ export const checkTableContents = async () => {
 export const createUser = ({ phone_number, username, public_key, profile_pic }) => {
   try {
     db.runSync('INSERT INTO Users (phone_number, username, public_key, profile_pic) VALUES (?, ?, ?, ?)', [phone_number, username, public_key, profile_pic]);
+    console.log('User created successfully');
   } catch (error) {
     console.log('Error creating user', error);
   }
@@ -190,7 +191,7 @@ export const getUsers = () => {
       console.log(userData);
       return userData;
     } else {
-      throw new Error('User not found');
+      throw new Error('Users not found');
     }
   } catch (error) {
     console.log(error);
@@ -201,6 +202,15 @@ export const getUsers = () => {
 export const deleteUser = (phone_number) => {
   try {
     db.runSync('DELETE FROM Users WHERE phone_number = ?', phone_number);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const updateUserNumber = (username, newPhoneNumber) => {
+  try {
+    db.runSync('UPDATE Users SET phone_number = ? WHERE username = ?', [newPhoneNumber, username]);
   } catch (error) {
     console.log(error);
   }
@@ -274,7 +284,10 @@ export const updateConversation = ({ conversation_id, last_message_id }) => {
 
 export const createMessage = ({ message_id, conversation_id, sender_id, recipient_id, content }) => {
   try {
+    console.log("Attempting to insert message into DB", message_id, conversation_id, sender_id, recipient_id, content);
     db.runSync('INSERT INTO Messages (message_id, conversation_id, sender_id, recipient_id, content) VALUES (?, ?, ?, ?, ?)', [message_id, conversation_id, sender_id, recipient_id, content]);
+    console.log("Attempting to update conversation: ", conversation_id, message_id);
+    updateConversation({ conversation_id, last_message_id: message_id });
   } catch (error) {
     console.log('Error creating message', error);
   }

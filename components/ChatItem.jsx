@@ -46,15 +46,17 @@ const ChatItem = ({ conversation, router, messageLength = 30 }) => {
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error}</Text>;
   if (!conversationData) return null;
+
   const truncateText = (text, maxLength) => {
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
+
   const { user2_name } = conversationData;
-  const lastMessage = fetchedMessages.length > 0 ? fetchedMessages[fetchedMessages.length - 1] : { content: "No messages" };
+  const lastMessage = fetchedMessages.length > 0 ? fetchedMessages[fetchedMessages.length - 1] : { content: "No messages", timestamp: "" };
   const displayedMessage = truncateText(lastMessage.content || "", messageLength);
 
   const openChat = () => {
-    router.push({ pathname: '/conversation', params: conversation_id });
+    router.push({ pathname: '/conversation', params: { conversation_id } });
   };
 
   const ReadIcon = () => {
@@ -64,8 +66,6 @@ const ChatItem = ({ conversation, router, messageLength = 30 }) => {
       <Image source={require('../assets/unread.png')} />
     );
   };
-
-
 
   return (
     <TouchableOpacity className="flex-row items-center px-4 py-2" onPress={openChat}>
@@ -81,7 +81,7 @@ const ChatItem = ({ conversation, router, messageLength = 30 }) => {
             <Text className="text-gray-400 text-xs font-plight pl-2">{displayedMessage}</Text>
           </View>
         </View>
-        <Text className="text-gray-500 text-xs">{lastMessage.timestamp}</Text>
+        <Text className="text-gray-500 text-xs">{lastMessage.timestamp || "No messages"}</Text>
       </View>
     </TouchableOpacity>
   );
