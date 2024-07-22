@@ -10,7 +10,7 @@ export const initDatabase = async () => {
       public_key TEXT DEFAULT NULL,
       profile_pic TEXT DEFAULT NULL
     )`);
-    
+
     console.log('User table created successfully');
     db.runSync(`CREATE TABLE IF NOT EXISTS CurrentUser (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -252,6 +252,22 @@ export const getConversation = (conversation_id) => {
     return null;
   }
 };
+
+export const conversationExists = (user1_id, user2_id) => {
+  try {
+    console.log('Attempting to search for conversation with IDs:', user1_id, user2_id);
+    const conversation = db.getFirstSync(
+      'SELECT conversation_id FROM Conversations WHERE user1_id = ? AND user2_id = ?',
+      [user1_id, user2_id]
+    );
+    console.log('Conversation found in DB with ID: ',conversation);
+    return conversation;
+  } catch (error) {
+    console.log('Error checking conversation existence', error);
+    return false;
+  }
+};
+
 
 export const getConversations = () => {
   try {

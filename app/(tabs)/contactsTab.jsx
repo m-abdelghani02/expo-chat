@@ -16,6 +16,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import Constants from "expo-constants";
 import { StatusBar } from "expo-status-bar";
 import * as Contacts from 'expo-contacts';
+import { createConversationHandler } from "../../handlers/createConversationHandler"; // Import your handler
+import { conversationExists } from "../../db/dbService";
+import { authService } from "../../services/authService";
 
 const ContactsTab = () => {
   const [contacts, setContacts] = useState([]);
@@ -47,10 +50,44 @@ const ContactsTab = () => {
     return phoneNumber.replace(/\D/g, ''); // Remove all non-digit characters
   };
 
+  const handleChatPress = async (phoneNumber) => {
+    try {
+      console.log(phoneNumber);
+      const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
+      console.log('Before get user');
+      const user = await authService.getUser();
+      console.log('after get user');
+      const userId = user.phone_number;
+      const user1_id = userId; 
+      const user2_id = normalizedPhoneNumber;
+      console.log('User IDs:', user1_id, user2_id);
+      const conversationExistsInDb = await conversationExists(user1_id, user2_id);
+      console.log('Conversation exists in contacts =', conversationExistsInDb);
+      if (conversationExistsInDb) {
+        const conversation_id = conversationExistsInDb.conversation_id;
+        console.log('Conversation id =', conversation_id);
+        router.push({ pathname: '/conversation', params: { conversation_id } });
+      } else {
+        await createConversationHandler(phoneNumber);
+        Alert.alert('Conversation Created', `Started a chat with ${phoneNumber}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Could not start a chat');
+    }
+  };
+
   const renderPhoneNumbers = (contact) => {
     const phoneNumbersSet = new Set(contact.phoneNumbers.map(phone => normalizePhoneNumber(phone.number)));
     return Array.from(phoneNumbersSet).map((number, idx) => (
-      <Text key={idx} className="text-base text-white">{number}</Text>
+      <View key={idx} className="flex-row justify-between items-center">
+        <Text className="text-base text-white">{number}</Text>
+        <TouchableOpacity
+          className="bg-[#3400A1] p-2 rounded-full shadow-lg"
+          onPress={() => handleChatPress(number)}
+        >
+          <Text className="text-white">Chat</Text>
+        </TouchableOpacity>
+      </View>
     ));
   };
 
