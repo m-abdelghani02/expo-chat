@@ -3,7 +3,7 @@ import {authService} from '../services/authService.js';
 import { uuid } from 'expo-modules-core';
 
 export const sendMessageHandler = async ({ message_id, conversation_id, content, recipient_id }) => {
-  const user = authService.getUser();
+  const user = await authService.getUser();
   const messageData = {message_id ,conversation_id, sender_id: user.phone_number, recipient_id, content };
   console.log("Message data inside handler:", messageData);
   try { 

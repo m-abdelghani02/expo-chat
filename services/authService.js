@@ -1,20 +1,35 @@
+import * as SecureStore from 'expo-secure-store';
 
 export const authService = {
-    
-    user: {
-        phone_number: '1234567890',
-        username: 'currentUser',
-        profile_pic: null
-    },
-    setUser(user) {
-      this.user = user;
-    },
-    getUser() {
-      console.log(this.user);
-      return this.user;
-    },
-    isLoggedIn() {
-      return true;
+  async setUser(user) {
+    try {
+      await SecureStore.setItemAsync('user', JSON.stringify(user));
+      console.log('User saved successfully.');
+    } catch (error) {
+      console.error('Error saving user:', error);
     }
-  };
-  
+  },
+
+  async getUser() {
+    try {
+      const userString = await SecureStore.getItemAsync('user');
+      if (userString) {
+        const user = JSON.parse(userString);
+        const { phone_number, username, public_key, profile_pic } = user;
+        console.log('User retrieved:', { phone_number, username, public_key, profile_pic });
+        return { phone_number, username, public_key, profile_pic };
+      } else {
+        console.log('No user found.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error retrieving user:', error);
+      return null;
+    }
+  },
+
+  async isLoggedIn() {
+    const user = await this.getUser();
+    return user !== null;
+  }
+};

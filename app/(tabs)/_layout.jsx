@@ -31,22 +31,7 @@ const TabIcon = ({icon, color, name, focused}) => {
     </View>
   )
 }
-const MessageIcon = ({icon, color, name, focused}) => {
-  return(
-    
-    <View 
-      className={'items-center justify-center w-16 h-16 mb-4 rounded-3xl bg-[#3400A1]'}
-    >
-      
-        <Image
-          source={icon}
-          resizeMode='contain'
-          className='w-7 h-7'
-        /> 
-    </View>
-      
-  )
-}
+
 
 const TabsLayout = () => {
   return (
@@ -100,23 +85,6 @@ const TabsLayout = () => {
             ),
           }
         }
-      />
-      <Tabs.Screen
-        name="new-message"
-        options={{
-          title:'',
-          headerShown: false,
-          tabBarIcon: ({ color, focused }) => (
-            <MessageIcon
-              icon={require('../../assets/message-icon.png')} // Replace with your chat icon path
-              color={color}
-              name=""
-              focused={focused}
-              tab
-            />
-          ),
-          tabBarShowLabel: false,
-        }}
       />
       <Tabs.Screen
         name="contactsTab"

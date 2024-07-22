@@ -34,7 +34,12 @@
           "contactsPermission": "Allow $(Enigma) to access your contacts."
         }
       ],
-      "expo-secure-store"
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Allow $(Enigma) to access your Face ID biometric data."
+        }
+      ]
     ],
     "extra": {
       "router": {

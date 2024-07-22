@@ -10,7 +10,14 @@ export const initDatabase = async () => {
       public_key TEXT DEFAULT NULL,
       profile_pic TEXT DEFAULT NULL
     )`);
+    
     console.log('User table created successfully');
+    db.runSync(`CREATE TABLE IF NOT EXISTS CurrentUser (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      phone_number TEXT UNIQUE,
+      FOREIGN KEY (phone_number) REFERENCES Users(phone_number)
+    )`);
+    console.log('CurrentUser table created successfully');
 
     db.runSync(`CREATE TABLE IF NOT EXISTS Conversations (
       conversation_id TEXT PRIMARY KEY,

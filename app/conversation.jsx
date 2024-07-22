@@ -37,8 +37,9 @@ const Conversation = () => {
         const conversationMessages = await getConversationMessages(conversationId);
         console.log('Fetched Messages:', conversationMessages);
 
-        const transformedMessages = transformMessages(conversationMessages);
+        const transformedMessages = await transformMessages(conversationMessages);
         setMessages(transformedMessages);
+        console.log('Messages state updated:', messages);
       } catch (error) {
         console.error('Error fetching messages:', error);
       }
@@ -143,15 +144,19 @@ const Conversation = () => {
     updateLastMessageId({ conversation_id: conversationId, last_message_id: message_id });
   };
 
-  const transformMessages = (messages) => {
+  const transformMessages = async (messages) => {
+    const user = await authService.getUser();
+    const userPhoneNumber = user.phone_number;
+    console.log('userPhoneNumber inside tranformMessages', userPhoneNumber);
     return messages.map((message) => ({
       id: message.message_id,
       text: message.content,
-      type: message.sender_id === authService.getUser().phone_number ? 'sent' : 'received',
+      type: message.sender_id === userPhoneNumber ? 'sent' : 'received',
       time: formatTimestamp(message.timestamp),
       isRead: false,
     }));
   };
+  
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);

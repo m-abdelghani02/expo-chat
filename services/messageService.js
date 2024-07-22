@@ -1,5 +1,6 @@
 import * as socketService from './socketService.js';
 import * as dbService from '../db/dbService.js';
+import { authService } from './authService.js';
 
 const sendMessage = async ({ message_id, conversation_id, sender_id, recipient_id, content }) => {
   const messageData = { message_id, conversation_id, sender_id, recipient_id, content };
@@ -16,7 +17,7 @@ const sendMessage = async ({ message_id, conversation_id, sender_id, recipient_i
         throw new Error('Failed to reconnect. Socket still not connected.');
       }
     }
-
+    console.log('Attempting to call dbService.createMessage inside',(await authService.getUser()).username,'with:', messageData);
     // Send message to database
     await dbService.createMessage(messageData);
 
@@ -38,6 +39,7 @@ const receiveMessage = async (message) => {
     
     // Check if the message already exists in the database
     const existingMessage = dbService.getMessage(message_id);
+    console.log('Existing message ?', existingMessage);
     if (!existingMessage) {
       // Create the new message
       console.log('Trying to create new message from recieved:', message);

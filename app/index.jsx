@@ -6,10 +6,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import Constants from 'expo-constants';
 import { StatusBar } from "expo-status-bar";
 import OnboardingButton from "../components/OnboardingButton";
-import * as socketService from '../services/socketService';
+import { authService } from "../services/authService";
 const App = () => {
   console.log(height);
-
+  useEffect(() => {
+    const init = async () => {
+      const user = await authService.isLoggedIn();
+      if (user) {
+        router.replace('/chatTab');
+      }
+    }
+    init();
+  }, [])
+  
   
   return (
     

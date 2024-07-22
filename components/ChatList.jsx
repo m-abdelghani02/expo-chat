@@ -6,10 +6,10 @@ import { useRouter, useFocusEffect } from 'expo-router';
 const ChatList = ({ conversations}) => {
     const router = useRouter();
     useEffect(() => {
-      console.log('Conversations inside ChatList: ', conversations);
+      console.log('Conversations inside ChatList changed: ', conversations);
     
 
-    }, [])
+    }, [conversations])
     
     
 

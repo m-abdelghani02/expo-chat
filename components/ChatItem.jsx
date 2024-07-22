@@ -47,7 +47,7 @@ const ChatItem = ({ conversation, router, messageLength = 30 }) => {
     };
 
     fetchConversationData();
-  }, [conversation_id, lastMessage]);
+  }, [conversation_id, lastMessage, conversation]);
 
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error}</Text>;
