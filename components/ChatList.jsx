@@ -1,7 +1,7 @@
 import { View, Text, ScrollView } from 'react-native'
 import React, { useEffect } from 'react'
 import ChatItem from './ChatItem'
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 
 const ChatList = ({ conversations}) => {
     const router = useRouter();
@@ -10,6 +10,7 @@ const ChatList = ({ conversations}) => {
     
 
     }, [])
+    
     
 
 /*     const parseTimestamp = (timestamp) => {
@@ -29,21 +30,21 @@ const ChatList = ({ conversations}) => {
     }); */
 
 
-    return (
-      <ScrollView className="flex-1 mb-24">
-        {conversations.length > 0 ? (
-          conversations.map((conversation) => (
-            <ChatItem
-              key={conversation.conversation_id}
-              conversation={conversation}
-              router={router}
-            />
-          ))
-        ) : (
-          <Text>No conversations available</Text>
-        )}
-      </ScrollView>
-    );
+return (
+  <ScrollView className="flex-1 mb-24">
+    {conversations.length > 0 ? (
+      conversations.map((conversation) => (
+        <ChatItem
+          key={conversation.conversation_id}
+          conversation={conversation}
+          router={router}
+        />
+      ))
+    ) : (
+      <Text>No conversations available</Text>
+    )}
+  </ScrollView>
+);
   };
 
 export default ChatList

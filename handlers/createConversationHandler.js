@@ -13,6 +13,7 @@ export const createConversationHandler = async (recipient_id) => {
   try {
     console.log("Conversation Data before emit:", conversationData);
     socketService.emit('createConversation', conversationData);
+    return true;
   } catch (error) {
     console.error('Error creating conversation:', error);
   }

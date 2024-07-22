@@ -45,7 +45,7 @@ export const updateLastMessageId = async ({ conversation_id, last_message_id }) 
             {
             console.log('Updated conversation ', conversation_id, ' successfully with last_message_id ', last_message_id);
             } 
-        else throw new Error('Error updating conversation');
+        //else throw new Error('Error updating conversation');
     } catch (error) {
         console.log(error);
     }

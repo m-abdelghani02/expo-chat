@@ -277,9 +277,20 @@ export const deleteConversation = (conversation_id) => {
 
 export const updateConversation = ({ conversation_id, last_message_id }) => {
   try {
-    db.runSync('UPDATE Conversations SET last_message_id = ? WHERE conversation_id = ?', [last_message_id, conversation_id]);
+    // Check if the conversation exists
+    const conversation = db.getFirstSync('SELECT conversation_id FROM Conversations WHERE conversation_id = ?', [conversation_id]);
+    if (conversation) {
+      // Update the conversation
+      console.log('Conversation found in DB', conversation);
+      db.runSync('UPDATE Conversations SET last_message_id = ? WHERE conversation_id = ?', [last_message_id, conversation_id]);
+      console.log('Conversation updated successfully in DB');
+      const conversation = db.getFirstSync('SELECT last_message_id FROM Conversations WHERE conversation_id = ?', [conversation_id]);
+      console.log('lastmessage id new value in DB', conversation);
+    } else {
+      throw new Error('Conversation not found');
+    }
   } catch (error) {
-    console.log('Error updating conversation', error);
+    console.log('Error updating conversation, reason:', error);
   }
 };
 

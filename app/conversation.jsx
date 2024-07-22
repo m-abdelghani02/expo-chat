@@ -18,9 +18,10 @@ import uuid from "react-native-uuid";
 import * as ImagePicker from 'expo-image-picker';
 import { getConversationMessages } from '../services/messageService';
 import { sendMessageHandler } from '../handlers/sendMessageHandler';
-import { getConversationById } from "../services/conversationService";
+import { getConversationById, updateLastMessageId } from "../services/conversationService";
 import { authService } from "../services/authService";
 import * as socketService from '../services/socketService';
+import * as dbService from '../db/dbService';
 
 const Conversation = () => {
   const item = useLocalSearchParams();
@@ -120,15 +121,26 @@ const Conversation = () => {
     }
   };
 
-  const receiveMessage = (message) => {
+  const receiveMessage = async (message) => {
+    console.log('Received message data =', message);
+    const { message_id, conversation_id,sender_id,recipient_id, content} = message;
     const transformedMessage = {
-      id: message.message_id,
-      text: message.content,
+      id: message_id,
+      text: content,
       type: 'received',
       time: formatTimestamp(new Date()), // Adjust if timestamp is provided
       isRead: false,
     };
     setMessages((prevMessages) => [...prevMessages, transformedMessage]);
+    const storedMessage = {
+      message_id: message_id,
+      conversation_id: conversationId,
+      sender_id: sender_id,
+      recipient_id: recipient_id,
+      content: content}
+    await dbService.createMessage(storedMessage);
+    console.log('Updating conversation', conversationId, ' with last_message_id', message_id);
+    updateLastMessageId({ conversation_id: conversationId, last_message_id: message_id });
   };
 
   const transformMessages = (messages) => {

@@ -143,6 +143,8 @@ const Chat = () => {
     };
   }, []);
 
+  
+
 
   return (
     <View className="flex-1">

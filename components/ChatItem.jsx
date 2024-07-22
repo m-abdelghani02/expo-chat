@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { getConversationById } from '../services/conversationService';
 import { getConversationMessages } from '../services/messageService';
 import userService from '../services/userService';
+import { getMessage } from '../db/dbService';
 
 const ChatItem = ({ conversation, router, messageLength = 30 }) => {
   const [conversationData, setConversationData] = useState(null);
   const [fetchedMessages, setFetchedMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastMessageText, setLastMessageText] = useState(null);
   const readStatus = true;
   const { conversation_id } = conversation;
 
@@ -18,7 +20,11 @@ const ChatItem = ({ conversation, router, messageLength = 30 }) => {
         console.log('convoooo id', conversation_id);
         const fetchedConversation = await getConversationById(conversation_id);
         const user2_id = fetchedConversation.user2_id;
-
+        const LAST_MESSAGE_ID = fetchedConversation.last_message_id;
+        console.log('LAST_MESSAGE_ID=',LAST_MESSAGE_ID);
+        const LAST_MESSAGE = await getMessage(LAST_MESSAGE_ID).content;
+        console.log('LAST_MESSAGE=',LAST_MESSAGE);
+        setLastMessageText(LAST_MESSAGE);
         // Fetch user data for user2
         const user2 = await userService.getUserById(user2_id);
 
@@ -41,7 +47,7 @@ const ChatItem = ({ conversation, router, messageLength = 30 }) => {
     };
 
     fetchConversationData();
-  }, [conversation_id]);
+  }, [conversation_id, lastMessage]);
 
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error}</Text>;
@@ -52,8 +58,8 @@ const ChatItem = ({ conversation, router, messageLength = 30 }) => {
   };
 
   const { user2_name } = conversationData;
-  const lastMessage = fetchedMessages.length > 0 ? fetchedMessages[fetchedMessages.length - 1] : { content: "No messages", timestamp: "" };
-  const displayedMessage = truncateText(lastMessage.content || "", messageLength);
+  const lastMessage = lastMessageText;
+  const displayedMessage = truncateText(lastMessage || "", messageLength);
 
   const openChat = () => {
     router.push({ pathname: '/conversation', params: { conversation_id } });
